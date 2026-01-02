@@ -3,7 +3,7 @@ const axios = require("axios");
 module.exports = {
   name: "weather",
   aliases: ["cuaca"],
-  description: "Cek cuaca teks lengkap",
+  description: "Cek cuaca teks lengkap dengan nearest area",
 
   async execute(msg, args) {
     if (!args.length) return msg.reply("☁️ Pakai: !weather <kota>");
@@ -17,7 +17,7 @@ module.exports = {
 
     if (!city) return msg.reply("❌ Nama kota tidak valid.");
 
-    const url = `https://wttr.in/${encodeURIComponent(city)}?format=j1`;
+    const url = `https://id.wttr.in/${encodeURIComponent(city)}?format=j1`;
 
     try {
       const res = await axios.get(url, { timeout: 10000 }); // timeout 10 detik
@@ -28,18 +28,21 @@ module.exports = {
       }
 
       const current = data.current_condition[0];
-      const desc = current.weatherDesc?.[0]?.value || "-";
+      const desc = current.lang_id?.[0]?.value || "-";
       const tempC = current.temp_C || "-";
       const humidity = current.humidity || "-";
       const windKph = current.windspeedKmph || "-";
 
-      const text = `🌦️ Cuaca di ${city}
+      // Ambil nearest area kalau ada
+      const nearest = data.nearest_area?.[0]?.areaName?.[0]?.value || city;
+
+      const text = `🌦️ Cuaca di ${nearest} (${city})
 Suhu: ${tempC}°C
 Kelembaban: ${humidity}%
 Angin: ${windKph} km/h
 Kondisi: ${desc}
 
-*Data By: _wttr.in_*`;
+*Data dari: _wttr.in_*`;
 
       await msg.reply(text);
 
