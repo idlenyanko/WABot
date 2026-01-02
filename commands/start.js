@@ -17,9 +17,6 @@ Asisten kucing tomboy yang siap jagain grupmu dari spam, link aneh, & kata-kata 
 📌 **!info**  
    — Info fitur bot & cara kerja.
 
-📌 **!donate**  
-   — Traktir aku ikan 🐟 hehe, biar tetap semangat jagain grup!
-
 ⚠️ **Catatan Penting:**  
 • Untuk setup grup, admin wajib DM aku pakai **!groupset help**.  
 • Pengguna biasa cuma bisa pakai command publik.  
