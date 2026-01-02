@@ -1,5 +1,8 @@
 # Dont Uploads 
 node_modules/
+.wwebjs_cache/
+.wwebjs_auth/
+data/
 
 # Environment / config files
 .env

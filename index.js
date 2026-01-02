@@ -1,18 +1,26 @@
+// -------------------- ANTI TAMPER --------------------
 const { antiTamperCheck } = require("./helpers/anti_tamper");
 antiTamperCheck();
 
+// -------------------- LIB --------------------
 const { Client, LocalAuth } = require("whatsapp-web.js");
 const qrcode = require("qrcode-terminal");
 const fs = require("fs");
 const path = require("path");
 
-// Mengimpor helper untuk pengecekan admin
+// -------------------- ADMIN --------------------
 const { isAdmin } = require("./helpers/admin_helper");
 
-// Load lisensi
+const adminPath = path.join(__dirname, "./data/admins.json");
+const adminList = JSON.parse(fs.readFileSync(adminPath, "utf8")).admins;
+
+console.log("👑 Admin list:");
+adminList.forEach(a => console.log("-", a));
+
+// -------------------- LICENSE --------------------
 const { checkLicense, isLicensed } = require("./loader/license_loader");
 
-// Load semua listener
+// -------------------- LISTENERS --------------------
 const { loadListeners } = require("./loader/listener_loader");
 
 // -------------------- INIT CLIENT --------------------
@@ -24,92 +32,82 @@ const client = new Client({
   },
 });
 
-// -------------------- AUTOLOAD LISTENERS --------------------
+// -------------------- LOAD LISTENERS --------------------
 loadListeners(client);
 
-// -------------------- QR CODE --------------------
-client.on("qr", (qr) => qrcode.generate(qr, { small: true }));
+// -------------------- QR --------------------
+client.on("qr", qr => qrcode.generate(qr, { small: true }));
 
-// -------------------- READY EVENT --------------------
-client.on("ready", async () => {
+// -------------------- READY --------------------
+client.on("ready", () => {
   console.log("Bot is ready!");
 
   let botNumber = client.info.wid.user;
   if (!botNumber.includes("@c.us")) botNumber += "@c.us";
 
-  console.log("Bot number:", botNumber);
-
-  // Cek lisensi bot
   checkLicense(botNumber);
-
   console.log("✔ Lisensi valid. Bot berjalan normal.");
 });
 
 // -------------------- LOAD COMMANDS --------------------
 const commands = new Map();
-const commandFiles = fs.readdirSync("./commands").filter((f) => f.endsWith(".js"));
+const commandFiles = fs.readdirSync("./commands").filter(f => f.endsWith(".js"));
+
 for (const file of commandFiles) {
   const cmd = require(`./commands/${file}`);
   commands.set(cmd.name, cmd);
+
+  if (cmd.aliases) {
+    for (const a of cmd.aliases) commands.set(a, cmd);
+  }
 }
+
 client.commands = commands;
 
-// -------------------- GLOBAL COOLDOWN (OPTIONAL) --------------------
+// -------------------- COOLDOWN --------------------
 const userCooldown = new Map();
-const COOLDOWN_TIME = 5 * 1000; // 5 detik
-const userNotified = new Set();
+const COOLDOWN_TIME = 5 * 1000;
 
-// -------------------- HANDLE MESSAGE (COMMANDS ONLY) --------------------
+// -------------------- MESSAGE HANDLER --------------------
 client.on("message", async (msg) => {
-  const prefix = "!"; // Prefix untuk command
-  const body = msg.body;
-
-  if (!body.startsWith(prefix)) return;
-  if (msg.from.endsWith("@g.us")) return; // Untuk menghindari grup
+  const prefix = "!";
+  if (!msg.body?.startsWith(prefix)) return;
+  if (msg.from.endsWith("@g.us")) return;
 
   const userId = msg.from;
-  const licensed = isLicensed(userId);
-
-  // Cek apakah pengirim adalah admin atau pemegang lisensi
   const isAdminUser = isAdmin(userId);
 
-  // Jika pengirim bukan admin dan tidak berlisensi, terapkan cooldown
-  if (!isAdminUser && !licensed) {
-    const lastUsed = userCooldown.get(userId) || 0;
+  // ---------- COOLDOWN (NON ADMIN) ----------
+  if (!isAdminUser) {
     const now = Date.now();
+    const last = userCooldown.get(userId) || 0;
 
-    if (!userNotified.has(userId)) {
-      await msg.reply(
-        "⚠️ Kamu menggunakan versi non-lisensi dan bukan admin.\n" +
-          `⏳ Command berikutnya akan dikenakan cooldown ${COOLDOWN_TIME / 1000} detik.`
-      );
-      userNotified.add(userId);
+    if (now - last < COOLDOWN_TIME) {
+      return msg.reply(`⏳ Command berikutnya cooldown ${COOLDOWN_TIME / 1000} detik.`);
     }
-
-    if (now - lastUsed < COOLDOWN_TIME) return;
 
     userCooldown.set(userId, now);
   }
 
-  const args = body.slice(prefix.length).trim().split(/ +/);
+  // ---------- COMMAND ----------
+  const args = msg.body.slice(prefix.length).trim().split(/ +/);
   const cmdName = args.shift().toLowerCase();
 
-  // Cek apakah command ada
   if (!commands.has(cmdName)) return;
 
-  // Periksa jika command milik admin atau publik
   const command = commands.get(cmdName);
-  if (command.isAdminOnly && !isAdmin(msg.from)) {
+
+  if (command.isAdminOnly && !isAdminUser) {
     return msg.reply("❌ Kamu tidak terdaftar sebagai admin.");
   }
 
   try {
     await command.execute(msg, args, client);
-  } catch (e) {
-    console.error(e);
+  } catch (err) {
+    console.error(err);
     await msg.reply("❌ Error saat menjalankan command.");
   }
 });
 
-// -------------------- INITIALIZE --------------------
+// -------------------- START --------------------
 client.initialize();
