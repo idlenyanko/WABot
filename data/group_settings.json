@@ -4,13 +4,7 @@
         "google.com"
     ],
     "filterWords": [
-        "spam",
-        "iklan",
-        "nganu",
-        "hayo",
-        "gimana",
-        "ngunu",
-        "anu"
+        "spam"
     ],
     "spam": {
         "enabled": true,
