@@ -1,6 +1,7 @@
 # WABot 🤖
 
-A WhatsApp bot built with Node.js, designed for automation and fun commands!  
+Hey there! This is my WhatsApp bot built with Node.js, kinda made with a little help from AI 😼✨  
+I experiment, break stuff, fix it… all in the name of learning & fun!  
 
 ## Features
 - Custom commands (`/commands`)
@@ -18,13 +19,13 @@ A WhatsApp bot built with Node.js, designed for automation and fun commands!
    ```bash
    npm install
    ```
-4. Run bot:  
+4. Run the bot:  
    ```bash
    node index.js
    ```
 
 ## Contributing
-Feel free to fork and add new features!  
+Feel free to fork, tweak, or just have fun exploring the code 😸✨  
 
 ## License
 MIT License

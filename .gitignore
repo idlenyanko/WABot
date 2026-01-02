@@ -1,0 +1,10 @@
+# Dont Uploads 
+node_modules/
+
+# Environment / config files
+.env
+.enc
+
+# Logs
+*.log
+
