@@ -1,0 +1,25 @@
+{
+    "groupId": "120363405043400663@g.us",
+    "whitelistUrls": [
+        "google.com"
+    ],
+    "filterWords": [
+        "spam",
+        "iklan",
+        "nganu",
+        "hayo",
+        "gimana",
+        "ngunu",
+        "anu"
+    ],
+    "spam": {
+        "enabled": true,
+        "limit": 5,
+        "window": 3000,
+        "kick": true,
+        "warnThreshold": 3,
+        "kickThreshold": 5,
+        "warnMessage": "⚠️ Kamu terdeteksi spam!",
+        "kickMessage": "🚫 Pengguna dikeluarkan karena spam berulang."
+    }
+}
