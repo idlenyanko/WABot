@@ -22,6 +22,21 @@ I experiment, break stuff, fix it… all in the name of learning & fun!
    node index.js
    ```
 
+## First Run
+Generate a license using `generate_key.js`.
+```bash
+node generate_key <your_number> <days>
+```
+
+Example:
+```bash
+node generate_key 6281xxx 10 
+```
+The bot will run for 10 days using the scanned WhatsApp number.
+
+If `gembok.env` is missing, generate it using `generate_gembok.js`.
+This file only contains SpecialText used to encrypt `masterkey.enc`.
+
 ## Contributing
 Feel free to fork, tweak, or just have fun exploring the code 😸✨  
 
