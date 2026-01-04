@@ -4,10 +4,8 @@ Hey there! This is my WhatsApp bot built with Node.js, kinda made with a little 
 I experiment, break stuff, fix it… all in the name of learning & fun!  
 
 ## Features
-- Custom commands (`/commands`)
-- Data storage & management (`/data`)
-- Event listeners (`/listeners`)
-- Helpers for utilities (`/helpers`)
+- Group Management (Anti-spam, Kick, URL Whitelist, Banned Words)
+- Special Text (Auto-reply when keywords are triggered "Configurable for DM, Group or Both")
 
 ## Setup
 1. Install Node.js & Git
